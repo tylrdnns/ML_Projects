@@ -1,0 +1,40 @@
+#import packages
+import pandas as pd
+import numpy as np
+import sklearn
+from sklearn import linear_model
+from sklearn.utils import shuffle
+
+#import pandas dataframe
+data = pd.read_csv("student-mat.csv", sep=";")
+
+#choose attributes
+data = data[["G1", "G2", "G3", "studytime", "failures", "absences"]]
+
+#create "label" (what you are trying to get)
+predict = "G3"
+
+#where x = training data and y = labels
+x = np.array(data.drop([predict], 1))
+y = np.array(data[predict])
+
+#take all attributes and split them into 4 different arrays
+#splitting 10% (0.1) of data into test samples to prevent model from already knowing the answers
+x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(x, y, test_size = 0.1)
+
+#create training model
+linear = linear_model.LinearRegression()
+
+#uses data to find best fit line and store in linear
+#return number for accuracy
+linear.fit(x_train, y_train)
+acc = linear.score(x_test, y_test)
+print(acc)
+
+print('Coefficient: \n', linear.coef_)
+print('Intercept: \n', linear.intercept_)
+
+predictions = linear.predict(x_test)
+
+for x in range(len(predictions)):
+    print(predictions[x], x_test[x], y_test[x])
